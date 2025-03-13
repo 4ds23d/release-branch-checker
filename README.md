@@ -1,51 +1,43 @@
 # Release Branch Checker
 
-Release Branch Checker to narzędzie napisane w Pythonie, które sprawdza, czy gałąź release została scalona z określoną gałęzią końcową (develop lub master). Projekt ten jest przydatny w procesie zarządzania wersjami w projektach opartych na systemie kontroli wersji Git.
+Release Branch Checker to narzędzie do sprawdzania, czy gałęzie release zostały zmergowane do gałęzi finalnej (np. `develop` lub `master`). Narzędzie to działa w nie w pełni sklonowanych repozytoriach, gdzie czasami następuje checkout na konkretnym commicie.
 
-## Spis treści
+## Funkcje
 
-- [Wymagania](#wymagania)
-- [Instalacja](#instalacja)
-- [Użycie](#użycie)
-- [Testowanie](#testowanie)
-- [Licencja](#licencja)
-
-## Wymagania
-
-- Python 3.x
-- Biblioteki do operacji na Git (np. GitPython)
+- Wyszukiwanie wszystkich gałęzi release nie starszych niż określona liczba dni.
+- Automatyczne sprawdzanie, czy wszystkie te gałęzie zostały zmergowane do gałęzi finalnej.
+- Konfiguracja zapisywana w pliku `.git/config`, aby nie przeszkadzać w działaniu Git-a.
 
 ## Instalacja
 
 1. Sklonuj repozytorium:
-   ```
-   git clone <URL_REPOZYTORIUM>
-   cd release-branch-checker
-   ```
+    ```sh
+    git clone <URL_REPOZYTORIUM>
+    cd release-branch-checker
+    ```
 
-2. Zainstaluj wymagane biblioteki:
-   ```
-   pip install -r requirements.txt
-   ```
+2. Zainstaluj wymagane zależności (jeśli są jakieś dodatkowe):
+    ```sh
+    pip install -r requirements.txt
+    ```
 
 ## Użycie
 
-Aby sprawdzić, czy gałąź release została scalona z gałęzią końcową, uruchom skrypt `main.py`:
+1. Uruchom skrypt [main.py](http://_vscodecontentref_/1):
+    ```sh
+    python src/main.py
+    ```
 
-```
-python src/main.py
-```
+2. Przy pierwszym uruchomieniu zostaniesz poproszony o podanie konfiguracji:
+    - Nazwa gałęzi finalnej (np. `develop` lub `master`)
+    - Wzór dla gałęzi release (np. `release/`)
+    - Maksymalna liczba dni, jaką może mieć gałąź release
 
-Upewnij się, że odpowiednie gałęzie są dostępne w lokalnym repozytorium.
+3. Skrypt automatycznie sprawdzi, czy wszystkie gałęzie release nie starsze niż określona liczba dni zostały zmergowane do gałęzi finalnej.
 
 ## Testowanie
 
-Aby uruchomić testy jednostkowe, użyj polecenia:
+Aby uruchomić testy, użyj `unittest`:
 
-```
-pytest tests/test_main.py
-```
-
-## Licencja
-
-Ten projekt jest objęty licencją MIT. Zobacz plik LICENSE, aby uzyskać więcej informacji.
+```sh
+python -m unittest discover -s tests
