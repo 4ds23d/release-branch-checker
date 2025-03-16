@@ -4,9 +4,10 @@ import os
 from datetime import datetime, timedelta
 
 working_direcotry_git = os.path.join(os.getcwd(), '.git')
+origin_name = 'origin'
 
 def is_release_branch(branch_name, release_branch_pattern):
-    return branch_name.startswith(release_branch_pattern)
+    return branch_name.startswith(release_branch_pattern) or branch_name.startswith(f'{origin_name}/' + release_branch_pattern)
 
 def run_command(command, print_error=True) -> str:
     try:
@@ -28,7 +29,7 @@ def run_git_command(command, print_error = True) -> str:
 def check_branch_merged(branch_name, final_branch):
     try:
         result = run_git_command(
-            ['branch', '--merged', final_branch]
+            ['branch', '-r', '--merged', f'{origin_name}/{final_branch}']
         )
         merged_branches = [branch.strip() for branch in result.splitlines()]
         return branch_name in merged_branches
@@ -39,7 +40,7 @@ def check_branch_merged(branch_name, final_branch):
 def get_recent_release_branches(max_days_old, release_branch_pattern):
     try:
         result = run_git_command(
-            ['for-each-ref', '--sort=-committerdate', '--format=%(refname:short) %(committerdate:iso8601)', 'refs/heads/'],
+            ['for-each-ref', '--sort=-committerdate', '--format=%(refname:short) %(committerdate:iso8601)', f'refs/remotes/{origin_name}'],
         )
         branches = result.splitlines()
         recent_branches = []
@@ -92,6 +93,8 @@ def get_git_config():
 def main():
     if not run_git_command(['config', '--local', '--get', 'releasechecker.finalBranch'], print_error=False):
         set_git_config()
+
+    run_git_command(['fetch', '--all'])
 
     final_branch, release_branch_pattern, max_days_old = get_git_config()
 
